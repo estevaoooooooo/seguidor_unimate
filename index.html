@@ -60,18 +60,33 @@
       <section class="screen" data-screen="video" aria-labelledby="video-title">
         <div class="screen-heading"><button class="back-button" data-go="home" type="button">←</button><div><div class="eyebrow">MODO AO VIVO</div><h2 id="video-title">Detecção por vídeo</h2></div></div>
         <div class="selected-robot-pill" id="video-robot-pill"></div>
-        <div class="video-placeholder"><div class="camera-orbit">◉</div><strong>Câmera inteligente</strong><p>A zona de chegada e a revisão das marcações entram na próxima etapa.</p><button class="outline-button" type="button" data-toast="O acesso à câmera será habilitado na próxima etapa.">Preparar câmera</button></div>
+        <div class="video-panel">
+          <div class="camera-frame" id="camera-frame">
+            <video id="camera-video" autoplay muted playsinline></video>
+            <canvas id="camera-overlay"></canvas>
+            <div class="camera-empty" id="camera-empty"><span>◉</span><strong>Câmera desligada</strong><small>Use a câmera traseira e enquadre a linha de chegada.</small></div>
+            <div class="video-hud"><span id="video-state">PRONTO</span><strong id="video-total">00:00.000</strong><small><b id="video-lap-number">0</b> VOLTAS · ATUAL <b id="video-current-lap">00:00.000</b></small></div>
+          </div>
+          <div class="video-actions"><button class="outline-button" id="camera-button" type="button">Abrir câmera</button><button class="outline-button" id="flip-camera" type="button" disabled>⇄ Trocar</button></div>
+          <div class="video-settings"><label>Zona de chegada <span id="finish-position">50%</span></label><input id="finish-line" type="range" min="15" max="85" value="50" /><small>Toque no vídeo para posicionar a linha. A detecção usa a mudança de movimento nessa faixa.</small></div>
+          <div class="video-actions main-video-actions"><button class="control-button main-action" id="video-start" type="button" disabled><span>●</span><strong>Iniciar detecção</strong></button><button class="control-button lap-action" id="video-manual-lap" type="button" disabled><span>＋</span><strong>Registrar volta</strong></button><button class="control-button reset-action" id="video-stop" type="button" disabled><span>■</span><strong>Parar</strong></button></div>
+          <p class="camera-help" id="camera-help">Abra a câmera, posicione a faixa de chegada e inicie a detecção. O botão manual continua disponível como segurança.</p>
+          <div class="recording-review" id="recording-review" hidden><video id="recorded-video" controls playsinline></video><div><strong>Revisar gravação</strong><small>Use a barra do vídeo para conferir o momento de cada volta.</small></div></div>
+        </div>
       </section>
 
       <section class="screen" data-screen="history" aria-labelledby="history-title">
         <div class="eyebrow">REGISTROS LOCAIS</div><h2 id="history-title">Histórico</h2><p class="lede">Suas sessões ficam salvas neste dispositivo.</p>
-        <div class="filters"><button class="filter active" type="button">Todas</button><button class="filter" type="button">Manuais</button><button class="filter" type="button">Vídeo</button></div>
+        <div class="filters"><button class="filter active" data-filter="all" type="button">Todas</button><button class="filter" data-filter="manual" type="button">Manuais</button><button class="filter" data-filter="video" type="button">Vídeo</button></div>
         <div id="history-list" class="history-list"></div>
       </section>
 
       <section class="screen" data-screen="compare" aria-labelledby="compare-title">
         <div class="eyebrow">ANÁLISE DE PERFORMANCE</div><h2 id="compare-title">Comparar robôs</h2><p class="lede">Selecione sessões salvas para visualizar a evolução lado a lado.</p>
-        <div class="coming-card"><span>↗</span><strong>Comparação em breve</strong><p>Gráficos de voltas, melhores tempos e médias serão conectados ao seu histórico.</p></div>
+        <div class="compare-selectors" id="compare-selectors"></div>
+        <div class="chart-card"><div class="chart-title"><strong>Tempo por volta</strong><small>MENOR É MELHOR · em segundos</small></div><canvas id="lap-chart" height="220"></canvas><div class="chart-legend" id="lap-legend"></div></div>
+        <div class="chart-card"><div class="chart-title"><strong>Melhor volta</strong><small>comparação direta</small></div><canvas id="best-chart" height="190"></canvas></div>
+        <div class="comparison-table-wrap"><div class="chart-title"><strong>Resumo da sessão</strong><small>métricas principais</small></div><div id="compare-table"></div></div>
       </section>
 
       <section class="screen" data-screen="settings" aria-labelledby="settings-title">
