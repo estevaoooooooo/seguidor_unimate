@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#090d16" />
+  <meta name="description" content="Cronômetro e análise de voltas para os robôs Zhort, Rios e Vendra." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>ZRV Lap Timer</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-mark" aria-hidden="true"><span>Z</span><span>R</span><span>V</span></div>
+      <div class="brand-copy"><strong>ZRV</strong><span>LAP TIMER</span></div>
+      <button class="icon-button" id="install-button" type="button" hidden aria-label="Instalar aplicativo">⇩</button>
+      <button class="icon-button" id="theme-button" type="button" aria-label="Alternar tema">☾</button>
+    </header>
+
+    <main id="app-main">
+      <section class="screen active" data-screen="home" aria-labelledby="home-title">
+        <div class="eyebrow">PAINEL DE TREINO <span class="live-dot"></span></div>
+        <h1 id="home-title">Pronto para<br><em>acelerar?</em></h1>
+        <p class="lede">Selecione o robô e escolha como quer acompanhar sua próxima volta.</p>
+
+        <div class="robot-grid" id="robot-selector" aria-label="Selecionar robô"></div>
+
+        <div class="section-heading"><span>ESCOLHA O MODO</span><small>FASE 01</small></div>
+        <div class="mode-list">
+          <button class="mode-card primary" data-go="manual" type="button">
+            <span class="mode-icon">◷</span><span><strong>Cronômetro manual</strong><small>Controle preciso de cada volta</small></span><b>→</b>
+          </button>
+          <button class="mode-card" data-go="video" type="button">
+            <span class="mode-icon">◉</span><span><strong>Detecção por vídeo</strong><small>Câmera + marcação automática</small></span><b>→</b>
+          </button>
+        </div>
+        <div class="quick-stats" id="home-stats"></div>
+      </section>
+
+      <section class="screen" data-screen="manual" aria-labelledby="manual-title">
+        <div class="screen-heading"><button class="back-button" data-go="home" type="button">←</button><div><div class="eyebrow">CRONÔMETRO MANUAL</div><h2 id="manual-title">Sessão de pista</h2></div></div>
+        <div class="selected-robot-pill" id="manual-robot-pill"></div>
+        <div class="timer-card">
+          <div class="timer-label"><span class="status-indicator" id="timer-status-dot"></span><span id="timer-status">PRONTO</span><span class="timer-lap-count" id="timer-lap-count">0 VOLTAS</span></div>
+          <div class="timer-display" id="timer-display">00:00<span>.000</span></div>
+          <div class="timer-subline">TEMPO TOTAL <strong id="timer-total">00:00.000</strong></div>
+        </div>
+        <div class="timer-controls">
+          <button class="control-button main-action" id="start-pause" type="button"><span>▶</span><strong>Iniciar</strong></button>
+          <button class="control-button lap-action" id="lap-button" type="button" disabled><span>＋</span><strong>Volta</strong></button>
+          <button class="control-button reset-action" id="reset-button" type="button"><span>↺</span><strong>Reset</strong></button>
+        </div>
+        <div class="section-heading laps-heading"><span>VOLTAS REGISTRADAS</span><small id="laps-best">MELHOR —</small></div>
+        <div class="laps-list" id="laps-list"><div class="empty-state"><span>＋</span><p>Inicie o cronômetro e toque em<br><strong>Volta</strong> ao cruzar a linha.</p></div></div>
+        <button class="save-session-button" id="save-session-button" type="button" disabled>Salvar sessão <span>↗</span></button>
+      </section>
+
+      <section class="screen" data-screen="video" aria-labelledby="video-title">
+        <div class="screen-heading"><button class="back-button" data-go="home" type="button">←</button><div><div class="eyebrow">MODO AO VIVO</div><h2 id="video-title">Detecção por vídeo</h2></div></div>
+        <div class="selected-robot-pill" id="video-robot-pill"></div>
+        <div class="video-placeholder"><div class="camera-orbit">◉</div><strong>Câmera inteligente</strong><p>A zona de chegada e a revisão das marcações entram na próxima etapa.</p><button class="outline-button" type="button" data-toast="O acesso à câmera será habilitado na próxima etapa.">Preparar câmera</button></div>
+      </section>
+
+      <section class="screen" data-screen="history" aria-labelledby="history-title">
+        <div class="eyebrow">REGISTROS LOCAIS</div><h2 id="history-title">Histórico</h2><p class="lede">Suas sessões ficam salvas neste dispositivo.</p>
+        <div class="filters"><button class="filter active" type="button">Todas</button><button class="filter" type="button">Manuais</button><button class="filter" type="button">Vídeo</button></div>
+        <div id="history-list" class="history-list"></div>
+      </section>
+
+      <section class="screen" data-screen="compare" aria-labelledby="compare-title">
+        <div class="eyebrow">ANÁLISE DE PERFORMANCE</div><h2 id="compare-title">Comparar robôs</h2><p class="lede">Selecione sessões salvas para visualizar a evolução lado a lado.</p>
+        <div class="coming-card"><span>↗</span><strong>Comparação em breve</strong><p>Gráficos de voltas, melhores tempos e médias serão conectados ao seu histórico.</p></div>
+      </section>
+
+      <section class="screen" data-screen="settings" aria-labelledby="settings-title">
+        <div class="eyebrow">PREFERÊNCIAS</div><h2 id="settings-title">Configurações</h2>
+        <div class="settings-list"><div><strong>Dados offline</strong><small>Armazenados apenas neste aparelho</small><span class="toggle on"></span></div><div><strong>Feedback sonoro</strong><small>Som ao registrar uma volta</small><span class="toggle on" id="sound-toggle"></span></div><div><strong>Exportar dados</strong><small>CSV das sessões salvas</small><button class="small-button" id="export-all" type="button">Exportar</button></div></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navegação principal">
+      <button class="nav-item active" data-go="home" type="button"><span>⌂</span><small>Início</small></button>
+      <button class="nav-item" data-go="history" type="button"><span>▤</span><small>Histórico</small></button>
+      <button class="nav-item central" data-go="manual" type="button"><span>◷</span><small>Timer</small></button>
+      <button class="nav-item" data-go="compare" type="button"><span>⌁</span><small>Comparar</small></button>
+      <button class="nav-item" data-go="settings" type="button"><span>⚙</span><small>Ajustes</small></button>
+    </nav>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js" defer></script>
+</body>
+</html>
+
