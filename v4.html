@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#090d16" />
+  <meta name="description" content="Cronômetro e análise de voltas para os robôs Zhort, Rios e Vendra." />
+  <link rel="manifest" href="manifest.webmanifest?v=3" />
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles-v4.css" />
+  <title>ZRV Lap Timer</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-mark" aria-hidden="true"><span>Z</span><span>R</span><span>V</span></div>
+      <div class="brand-copy"><strong>ZRV</strong><span>LAP TIMER</span></div>
+      <button class="icon-button" id="install-button" type="button" hidden aria-label="Instalar aplicativo">⇩</button>
+      <button class="icon-button" id="theme-button" type="button" aria-label="Alternar tema">☾</button>
+    </header>
+
+    <main id="app-main">
+      <section class="screen active" data-screen="home" aria-labelledby="home-title">
+        <div class="eyebrow">PAINEL DE TREINO <span class="live-dot"></span></div>
+        <h1 id="home-title">Pronto para<br><em>acelerar?</em></h1>
+        <p class="lede">Selecione o robô e escolha como quer acompanhar sua próxima volta.</p>
+
+        <div class="robot-grid" id="robot-selector" aria-label="Selecionar robô"></div>
+
+        <div class="section-heading"><span>ESCOLHA O MODO</span><small>FASE 01</small></div>
+        <div class="mode-list">
+          <button class="mode-card primary" data-go="manual" type="button">
+            <span class="mode-icon">◷</span><span><strong>Cronômetro manual</strong><small>Controle preciso de cada volta</small></span><b>→</b>
+          </button>
+          <button class="mode-card" data-go="video" type="button">
+            <span class="mode-icon">◉</span><span><strong>Detecção por vídeo</strong><small>Câmera + marcação automática</small></span><b>→</b>
+          </button>
+        </div>
+        <div class="quick-stats" id="home-stats"></div>
+      </section>
+
+      <section class="screen" data-screen="manual" aria-labelledby="manual-title">
+        <div class="screen-heading"><button class="back-button" data-go="home" type="button">←</button><div><div class="eyebrow">CRONÔMETRO MANUAL</div><h2 id="manual-title">Sessão de pista</h2></div></div>
+        <div class="selected-robot-pill" id="manual-robot-pill"></div>
+        <div class="timer-card">
+          <div class="timer-label"><span class="status-indicator" id="timer-status-dot"></span><span id="timer-status">PRONTO</span><span class="timer-lap-count" id="timer-lap-count">0 VOLTAS</span></div>
+          <div class="timer-display" id="timer-display">00:00<span>.000</span></div>
+          <div class="timer-subline">TEMPO TOTAL <strong id="timer-total">00:00.000</strong></div>
+        </div>
+        <div class="timer-controls">
+          <button class="control-button main-action" id="start-pause" type="button"><span>▶</span><strong>Iniciar</strong></button>
+          <button class="control-button lap-action" id="lap-button" type="button" disabled><span>＋</span><strong>Volta</strong></button>
+          <button class="control-button reset-action" id="reset-button" type="button"><span>↺</span><strong>Reset</strong></button>
+        </div>
+        <div class="section-heading laps-heading"><span>VOLTAS REGISTRADAS</span><small id="laps-best">MELHOR —</small></div>
+        <div class="laps-list" id="laps-list"><div class="empty-state"><span>＋</span><p>Inicie o cronômetro e toque em<br><strong>Volta</strong> ao cruzar a linha.</p></div></div>
+        <button class="save-session-button" id="save-session-button" type="button" disabled>Salvar sessão <span>↗</span></button>
+      </section>
+
+      <section class="screen" data-screen="video" aria-labelledby="video-title">
+        <div class="screen-heading"><button class="back-button" data-go="home" type="button">←</button><div><div class="eyebrow">MODO AO VIVO</div><h2 id="video-title">Detecção por vídeo</h2></div></div>
+        <div class="selected-robot-pill" id="video-robot-pill"></div>
+        <div class="video-panel">
+          <div class="camera-frame" id="camera-frame">
+            <video id="camera-video" autoplay muted playsinline></video>
+            <canvas id="camera-overlay"></canvas>
+            <div class="camera-empty" id="camera-empty"><span>◉</span><strong>Câmera desligada</strong><small>Use a câmera traseira e enquadre a linha de chegada.</small></div>
+            <div class="video-hud"><span id="video-state">PRONTO</span><strong id="video-total">00:00.000</strong><small><b id="video-lap-number">0</b> VOLTAS · ATUAL <b id="video-current-lap">00:00.000</b></small></div>
+          </div>
+          <div class="video-actions"><button class="outline-button" id="camera-button" type="button">Abrir câmera</button><button class="outline-button" id="flip-camera" type="button" disabled>⇄ Trocar</button></div>
+          <div class="video-settings"><label>Zona de chegada <span id="finish-position">50%</span></label><input id="finish-line" type="range" min="15" max="85" value="50" /><small>Toque no vídeo para posicionar a linha. A detecção usa a mudança de movimento nessa faixa.</small></div>
+          <div class="video-actions main-video-actions"><button class="control-button main-action" id="video-start" type="button" disabled><span>●</span><strong>Iniciar detecção</strong></button><button class="control-button lap-action" id="video-manual-lap" type="button" disabled><span>＋</span><strong>Registrar volta</strong></button><button class="control-button reset-action" id="video-stop" type="button" disabled><span>■</span><strong>Parar</strong></button></div>
+          <p class="camera-help" id="camera-help">Abra a câmera, posicione a faixa de chegada e inicie a detecção. O botão manual continua disponível como segurança.</p>
+          <div class="recording-review" id="recording-review" hidden><video id="recorded-video" controls playsinline></video><div><strong>Revisar gravação</strong><small>Use a barra do vídeo para conferir o momento de cada volta.</small></div></div>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="history" aria-labelledby="history-title">
+        <div class="eyebrow">REGISTROS LOCAIS</div><h2 id="history-title">Histórico</h2><p class="lede">Suas sessões ficam salvas neste dispositivo.</p>
+        <div class="filters"><button class="filter active" data-filter="all" type="button">Todas</button><button class="filter" data-filter="manual" type="button">Manuais</button><button class="filter" data-filter="video" type="button">Vídeo</button></div>
+        <div id="history-list" class="history-list"></div>
+      </section>
+
+      <section class="screen" data-screen="compare" aria-labelledby="compare-title">
+        <div class="eyebrow">ANÁLISE DE PERFORMANCE</div><h2 id="compare-title">Comparar robôs</h2><p class="lede">Selecione sessões salvas para visualizar a evolução lado a lado.</p>
+        <div class="compare-selectors" id="compare-selectors"></div>
+        <div class="chart-card"><div class="chart-title"><strong>Tempo por volta</strong><small>MENOR É MELHOR · em segundos</small></div><canvas id="lap-chart" height="220"></canvas><div class="chart-legend" id="lap-legend"></div></div>
+        <div class="chart-card"><div class="chart-title"><strong>Melhor volta</strong><small>comparação direta</small></div><canvas id="best-chart" height="190"></canvas></div>
+        <div class="comparison-table-wrap"><div class="chart-title"><strong>Resumo da sessão</strong><small>métricas principais</small></div><div id="compare-table"></div></div>
+      </section>
+
+      <section class="screen" data-screen="settings" aria-labelledby="settings-title">
+        <div class="eyebrow">PREFERÊNCIAS</div><h2 id="settings-title">Configurações</h2>
+        <div class="settings-list"><div><strong>Dados offline</strong><small>Armazenados apenas neste aparelho</small><span class="toggle on"></span></div><div><strong>Feedback sonoro</strong><small>Som ao registrar uma volta</small><span class="toggle on" id="sound-toggle"></span></div><div><strong>Exportar dados</strong><small>CSV das sessões salvas</small><button class="small-button" id="export-all" type="button">Exportar</button></div></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navegação principal">
+      <button class="nav-item active" data-go="home" type="button"><span>⌂</span><small>Início</small></button>
+      <button class="nav-item" data-go="history" type="button"><span>▤</span><small>Histórico</small></button>
+      <button class="nav-item central" data-go="manual" type="button"><span>◷</span><small>Timer</small></button>
+      <button class="nav-item" data-go="compare" type="button"><span>⌁</span><small>Comparar</small></button>
+      <button class="nav-item" data-go="settings" type="button"><span>⚙</span><small>Ajustes</small></button>
+    </nav>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app-v4.js" defer></script>
+</body>
+</html>
+
