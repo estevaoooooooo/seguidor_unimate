@@ -1,4 +1,4 @@
-const CACHE='zrv-lap-timer-v1';
+const CACHE='zrv-lap-timer-v2';
 const ASSETS=['./','index.html','styles.css','app.js','manifest.webmanifest','assets/icon.svg'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
 self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
